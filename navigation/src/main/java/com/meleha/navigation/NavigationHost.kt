@@ -24,8 +24,7 @@ fun NavigationHost(
         CompositionLocalProvider(
             LocalRouter provides router
         ) {
-            
+            routerMapper.invoke(navigationState.currentRoute)
         }
-        routerMapper.invoke(navigationState.currentRoute)
     }
 }
