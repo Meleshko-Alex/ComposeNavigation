@@ -8,5 +8,6 @@ sealed class NavigationEvent {
 }
 
 interface InternalNavigationState {
+    val currentUuid: String
     fun listen(): Flow<NavigationEvent>
 }

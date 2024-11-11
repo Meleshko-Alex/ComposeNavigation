@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.meleha.navigation.internal.InternalNavigationState
+import com.meleha.navigation.internal.RouteRecord
 import com.meleha.navigation.internal.ScreenStack
 
 @Stable
@@ -18,7 +19,7 @@ data class Navigation(
 @Composable
 fun rememberNavigation(initialRoute: Route): Navigation {
     val screenStack = rememberSaveable(initialRoute) {
-        ScreenStack(mutableStateListOf(initialRoute))
+        ScreenStack(mutableStateListOf(RouteRecord(initialRoute)))
     }
 
     return remember(initialRoute) {
