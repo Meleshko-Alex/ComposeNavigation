@@ -13,6 +13,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +36,7 @@ fun AddItemScreen() {
 
 @Composable
 fun AddItemContent(onSubmitNewItem: (String) -> Unit) {
-    var newItemValue by remember { mutableStateOf("") }
+    var newItemValue by rememberSaveable { mutableStateOf("") }
     val isAddEnabled by remember {
         derivedStateOf { newItemValue.isNotEmpty() }
     }
