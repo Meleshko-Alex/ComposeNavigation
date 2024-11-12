@@ -22,16 +22,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.R
+import com.meleha.composenavigation.ui.AppScreen
+import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.navigation.LocalRouter
 
-@Composable
-fun AddItemScreen() {
-    val itemsRepository = ItemsRepository.get()
-    val router = LocalRouter.current
-    AddItemContent {
-        itemsRepository.addItem(it)
-        router.pop()
+val AddItemScreenProducer = { AddItemScreen() }
+
+class AddItemScreen : AppScreen {
+    override val environment = AppScreenEnvironment().apply {
+        titleRes = R.string.add_item
+
     }
+
+    @Composable
+    override fun Content() {
+        val itemsRepository = ItemsRepository.get()
+        val router = LocalRouter.current
+        AddItemContent {
+            itemsRepository.addItem(it)
+            router.pop()
+        }
+    }
+
 }
 
 @Composable

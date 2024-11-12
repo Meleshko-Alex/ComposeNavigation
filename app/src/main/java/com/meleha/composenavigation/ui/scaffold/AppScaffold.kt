@@ -10,10 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.meleha.composenavigation.AppRoute
 import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.R
-import com.meleha.composenavigation.ui.screens.AddItemScreen
-import com.meleha.composenavigation.ui.screens.ItemsScreen
-import com.meleha.composenavigation.ui.screens.ProfileScreen
-import com.meleha.composenavigation.ui.screens.SettingsScreen
+import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.navigation.NavigationHost
 import com.meleha.navigation.rememberNavigation
 
@@ -23,6 +20,7 @@ fun AppScaffold() {
     val itemsRepository: ItemsRepository = ItemsRepository.get()
     val navigation = rememberNavigation(initialRoute = AppRoute.Tab.Items)
     val (router, navigationState) = navigation
+    val environment = navigationState.currentScreen.environment as AppScreenEnvironment
 
     Scaffold(
         topBar = {
@@ -39,10 +37,7 @@ fun AppScaffold() {
             )
         },
         floatingActionButton = {
-            AppFloatingActionButton(
-                currentRoute = navigationState.currentRoute,
-                onClick = { router.launch(AppRoute.AddItem) }
-            )
+            AppFloatingActionButton(environment.floatingAction)
         },
         floatingActionButtonPosition = FabPosition.End,
         bottomBar = {
@@ -55,13 +50,6 @@ fun AppScaffold() {
         NavigationHost(
             navigation = navigation,
             modifier = Modifier.padding(paddingValues)
-        ) { currentRoute ->
-            when (currentRoute) {
-                AppRoute.Tab.Items -> ItemsScreen()
-                AppRoute.Tab.Profile -> SettingsScreen()
-                AppRoute.Tab.Settings -> ProfileScreen()
-                AppRoute.AddItem -> AddItemScreen()
-            }
-        }
+        )
     }
 }

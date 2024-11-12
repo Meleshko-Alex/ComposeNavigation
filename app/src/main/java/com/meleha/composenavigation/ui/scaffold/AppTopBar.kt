@@ -23,8 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.meleha.composenavigation.AppRoute
 import com.meleha.composenavigation.R
+import com.meleha.composenavigation.ui.AppScreenEnvironment
+import com.meleha.composenavigation.ui.screens.ItemsScreen
 import com.meleha.navigation.NavigationState
 import com.meleha.navigation.Route
+import com.meleha.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,12 +37,11 @@ fun AppTopBar(
     onAboutClick: () -> Unit,
     onClearClick: () -> Unit
 ) {
+    val environment = navigationState.currentScreen.environment as AppScreenEnvironment
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = stringResource(
-                    (navigationState.currentRoute as? AppRoute)?.titleRes ?: R.string.app_name
-                ),
+                text = stringResource((environment.titleRes)),
                 fontWeight = FontWeight.Bold
             )
         },
@@ -92,6 +94,7 @@ fun PreviewAppTopBar() {
     val mockNavigationState = object : NavigationState {
         override val isRoot: Boolean = false
         override val currentRoute: Route = AppRoute.Tab.Items
+        override val currentScreen: Screen get() = ItemsScreen()
     }
 
     AppTopBar(
