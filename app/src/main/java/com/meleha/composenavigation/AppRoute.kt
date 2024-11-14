@@ -1,10 +1,11 @@
 package com.meleha.composenavigation
 
 import com.meleha.composenavigation.ui.AppScreen
-import com.meleha.composenavigation.ui.screens.AddItemScreenProducer
+import com.meleha.composenavigation.ui.screens.ItemScreenArgs
 import com.meleha.composenavigation.ui.screens.ItemsScreenProducer
 import com.meleha.composenavigation.ui.screens.ProfileScreenProducer
 import com.meleha.composenavigation.ui.screens.SettingsScreenProducer
+import com.meleha.composenavigation.ui.screens.itemScreenProducer
 import com.meleha.navigation.Route
 import kotlinx.parcelize.Parcelize
 
@@ -13,7 +14,9 @@ sealed class AppRoute(
 ) : Route {
 
     @Parcelize
-    data object AddItem : AppRoute(AddItemScreenProducer)
+    data class Item(
+        val args: ItemScreenArgs
+    ) : AppRoute(itemScreenProducer(args))
 
     sealed class Tab(
         screenProducer: () -> AppScreen

@@ -1,5 +1,6 @@
 package com.meleha.composenavigation.ui.screens
 
+import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,12 +26,29 @@ import com.meleha.composenavigation.R
 import com.meleha.composenavigation.ui.AppScreen
 import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.navigation.LocalRouter
+import kotlinx.parcelize.Parcelize
 
-val AddItemScreenProducer = { AddItemScreen() }
+fun itemScreenProducer(args: ItemScreenArgs): () -> ItemScreen {
+    return { ItemScreen(args) }
+}
 
-class AddItemScreen : AppScreen {
+sealed class ItemScreenArgs() : Parcelable {
+    @Parcelize
+    data object Add : ItemScreenArgs()
+
+    @Parcelize
+    data class Edit(val index: Int) : ItemScreenArgs()
+}
+
+class ItemScreen(
+    private val args: ItemScreenArgs
+) : AppScreen {
     override val environment = AppScreenEnvironment().apply {
-        titleRes = R.string.add_item
+        titleRes = if (args is ItemScreenArgs.Add) {
+            R.string.add_item
+        } else {
+            R.string.edit_item
+        }
 
     }
 
@@ -38,8 +56,19 @@ class AddItemScreen : AppScreen {
     override fun Content() {
         val itemsRepository = ItemsRepository.get()
         val router = LocalRouter.current
-        AddItemContent {
-            itemsRepository.addItem(it)
+        ItemContent(
+            initialValue = if (args is ItemScreenArgs.Edit) {
+                remember { itemsRepository.getItems().value[args.index] }
+            } else {
+                ""
+            },
+            isAddMode = args is ItemScreenArgs.Add
+        ) { newValue ->
+            if (args is ItemScreenArgs.Edit) {
+                itemsRepository.updateItem(args.index, newValue)
+            } else {
+                itemsRepository.addItem(newValue)
+            }
             router.pop()
         }
     }
@@ -47,10 +76,14 @@ class AddItemScreen : AppScreen {
 }
 
 @Composable
-fun AddItemContent(onSubmitNewItem: (String) -> Unit) {
-    var newItemValue by rememberSaveable { mutableStateOf("") }
+fun ItemContent(
+    initialValue: String = "",
+    isAddMode: Boolean = false,
+    onSubmitNewItem: (String) -> Unit
+) {
+    var currentItemValue by rememberSaveable { mutableStateOf(initialValue) }
     val isAddEnabled by remember {
-        derivedStateOf { newItemValue.isNotEmpty() }
+        derivedStateOf { currentItemValue.isNotEmpty() }
     }
 
     Column(
@@ -59,25 +92,30 @@ fun AddItemContent(onSubmitNewItem: (String) -> Unit) {
         modifier = Modifier.fillMaxSize()
     ) {
         OutlinedTextField(
-            value = newItemValue,
+            value = currentItemValue,
             label = { Text(stringResource(R.string.enter_a_new_value)) },
             singleLine = true,
             onValueChange = { newValue ->
-                newItemValue = newValue
+                currentItemValue = newValue
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = isAddEnabled,
-            onClick = { onSubmitNewItem(newItemValue) }
+            onClick = { onSubmitNewItem(currentItemValue) }
         ) {
-            Text(text = stringResource(id = R.string.add_new_item))
+            val buttonText = if (isAddMode) {
+                R.string.add_item
+            } else {
+                R.string.edit_item
+            }
+            Text(text = stringResource(buttonText))
         }
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
-private fun AddItemPreview() {
-    AddItemContent {}
+private fun ItemPreview() {
+    ItemContent {}
 }

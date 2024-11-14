@@ -1,10 +1,11 @@
 package com.meleha.composenavigation.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.List
@@ -39,7 +40,7 @@ class ItemsScreen : AppScreen {
         floatingAction = FloatingAction(
             icon = Icons.Default.Add,
             onClick = {
-                router?.launch(AppRoute.AddItem)
+                router?.launch(AppRoute.Item(ItemScreenArgs.Add))
             }
         )
     }
@@ -52,14 +53,20 @@ class ItemsScreen : AppScreen {
         val isEmpty by remember {
             derivedStateOf { items.isEmpty() }
         }
-        ItemsContent(isItemEmpty = isEmpty, items = { items })
+        ItemsContent(
+            isItemEmpty = isEmpty,
+            items = { items },
+            onItemClicked = { index ->
+                router?.launch(AppRoute.Item(ItemScreenArgs.Edit(index)))
+            })
     }
 }
 
 @Composable
 fun ItemsContent(
     isItemEmpty: Boolean,
-    items: () -> List<String>
+    items: () -> List<String>,
+    onItemClicked: (Int) -> Unit
 ) {
     if (isItemEmpty) {
         Text(
@@ -73,10 +80,16 @@ fun ItemsContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(items.invoke()) { item ->
+            val itemList = items()
+            items(itemList.size) { index ->
                 Text(
-                    text = item,
-                    modifier = Modifier.padding(all = 8.dp)
+                    text = itemList[index],
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onItemClicked(index)
+                        }
+                        .padding(all = 8.dp)
                 )
             }
         }
@@ -86,5 +99,9 @@ fun ItemsContent(
 @Preview(showSystemUi = true)
 @Composable
 private fun ItemsPreview() {
-    ItemsContent (false) { listOf("aaa", "bbb") }
+    ItemsContent(
+        items = { listOf("aaa", "bbb") },
+        isItemEmpty = false,
+        onItemClicked = {}
+    )
 }

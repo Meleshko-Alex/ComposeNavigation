@@ -16,4 +16,5 @@
     <string name="add_new_item">Add new item</string>
     <string name="no_items">No items</string>
     <string name="enter_a_new_value">Enter a new value</string>
+    <string name="edit_item">Edit item</string>
 </resources>

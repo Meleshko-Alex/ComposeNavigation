@@ -8,6 +8,7 @@ interface ItemsRepository {
 
     fun getItems(): StateFlow<List<String>>
     fun addItem(item: String)
+    fun updateItem(index: Int, newValue: String)
     fun clear()
 
     companion object {
@@ -25,6 +26,12 @@ object ItemsRepositoryImpl : ItemsRepository {
 
     override fun addItem(item: String) {
         items.update { it + item }
+    }
+
+    override fun updateItem(index: Int, newValue: String) {
+        items.update {
+            it.toMutableList().apply { set(index, newValue) }
+        }
     }
 
     override fun clear() {
