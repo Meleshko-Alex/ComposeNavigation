@@ -10,17 +10,20 @@ import com.meleha.navigation.NavigationState
 import com.meleha.navigation.Route
 import com.meleha.navigation.Router
 import com.meleha.navigation.Screen
+import com.meleha.navigation.ScreenResponseReceiver
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class ScreenStack(
     private val routes: SnapshotStateList<RouteRecord>,
+    private val screenResponseBus: ScreenResponseBus = ScreenResponseBus()
     ) : NavigationState, Router, InternalNavigationState, Parcelable {
 
     override val isRoot: Boolean get() = routes.size == 1
     override val currentRoute: Route get() = routes.last().route
     override val currentUuid: String get() = routes.last().uuid
     override val currentScreen: Screen by derivedStateOf { currentRoute.screenProducer() }
+    override val screenResponseReceiver: ScreenResponseReceiver = screenResponseBus
 
     private val eventsFlow = MutableSharedFlow<NavigationEvent>(
         extraBufferCapacity = Int.MAX_VALUE
@@ -38,17 +41,22 @@ internal class ScreenStack(
     )
 
     override fun launch(route: Route) {
+        screenResponseBus.cleanUp()
         routes.add(RouteRecord(route))
     }
 
-    override fun pop() {
+    override fun pop(response: Any?) {
         val removedRoute = routes.removeLastOrNull()?.route
         if (removedRoute != null) {
             eventsFlow.tryEmit(NavigationEvent.Removed(removedRoute))
+            if (response != null) {
+                screenResponseBus.send(response)
+            }
         }
     }
 
     override fun restart(route: Route) {
+        screenResponseBus.cleanUp()
         routes.apply {
             routes.forEach {
                 eventsFlow.tryEmit(NavigationEvent.Removed(it.route))

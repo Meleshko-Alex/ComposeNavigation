@@ -27,6 +27,7 @@ import com.meleha.composenavigation.ui.AppScreen
 import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.composenavigation.ui.FloatingAction
 import com.meleha.navigation.LocalRouter
+import com.meleha.navigation.ResponseListener
 import com.meleha.navigation.Router
 
 val ItemsScreenProducer = { ItemsScreen() }
@@ -52,6 +53,13 @@ class ItemsScreen : AppScreen {
         val items by itemsRepository.getItems().collectAsStateWithLifecycle()
         val isEmpty by remember {
             derivedStateOf { items.isEmpty() }
+        }
+        ResponseListener<ItemScreenResponse> { response ->
+            if (response.args is ItemScreenArgs.Edit) {
+                itemsRepository.updateItem(response.args.index, response.newValue)
+            } else {
+                itemsRepository.addItem(response.newValue)
+            }
         }
         ItemsContent(
             isItemEmpty = isEmpty,

@@ -35,10 +35,14 @@ fun itemScreenProducer(args: ItemScreenArgs): () -> ItemScreen {
 sealed class ItemScreenArgs() : Parcelable {
     @Parcelize
     data object Add : ItemScreenArgs()
-
     @Parcelize
     data class Edit(val index: Int) : ItemScreenArgs()
 }
+
+data class ItemScreenResponse(
+    val args: ItemScreenArgs,
+    val newValue: String,
+)
 
 class ItemScreen(
     private val args: ItemScreenArgs
@@ -64,12 +68,7 @@ class ItemScreen(
             },
             isAddMode = args is ItemScreenArgs.Add
         ) { newValue ->
-            if (args is ItemScreenArgs.Edit) {
-                itemsRepository.updateItem(args.index, newValue)
-            } else {
-                itemsRepository.addItem(newValue)
-            }
-            router.pop()
+            router.pop(ItemScreenResponse(args, newValue))
         }
     }
 

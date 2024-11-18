@@ -19,15 +19,16 @@ fun NavigationHost(
     navigation: Navigation,
     modifier: Modifier = Modifier,
 ) {
-    val (router, navigationState) = navigation
+    val (router, navigationState, internalState) = navigation
     BackHandler(enabled = !navigationState.isRoot) {
         router.pop()
     }
     val saveableStateHolder = rememberSaveableStateHolder()
-    saveableStateHolder.SaveableStateProvider(key = navigationState.currentRoute) {
+    saveableStateHolder.SaveableStateProvider(key = internalState.currentUuid) {
         Box(modifier = modifier) {
             CompositionLocalProvider(
-                LocalRouter provides router
+                LocalRouter provides router,
+                LocalScreenResponseReceiver provides internalState.screenResponseReceiver
             ) {
                 navigationState.currentScreen.Content()
             }
