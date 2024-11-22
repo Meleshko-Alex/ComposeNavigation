@@ -8,7 +8,7 @@ import java.util.UUID
 
 @Immutable
 @Parcelize
-internal data class RouteRecord(
+data class RouteRecord(
     val uuid: String,
     val route: Route
 ) : Parcelable {

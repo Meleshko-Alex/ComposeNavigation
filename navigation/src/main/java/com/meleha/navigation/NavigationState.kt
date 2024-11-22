@@ -7,4 +7,5 @@ interface NavigationState {
     val isRoot: Boolean
     val currentRoute: Route
     val currentScreen: Screen
+    val currentStackIndex: Int
 }

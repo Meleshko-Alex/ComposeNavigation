@@ -8,5 +8,7 @@ internal object EmptyRouter : Router {
 
     override fun pop(response: Any?) = Unit
 
-    override fun restart(route: Route) = Unit
+    override fun restart(routeRouters: List<Route>, initialIndex: Int) = Unit
+
+    override fun switchStack(index: Int) = Unit
 }

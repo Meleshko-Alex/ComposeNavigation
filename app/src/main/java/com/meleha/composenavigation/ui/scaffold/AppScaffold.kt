@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.meleha.composenavigation.AppRoute
 import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.R
+import com.meleha.composenavigation.RootTabs
 import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.navigation.NavigationHost
 import com.meleha.navigation.rememberNavigation
@@ -18,7 +19,7 @@ import com.meleha.navigation.rememberNavigation
 fun AppScaffold() {
     val context = LocalContext.current
     val itemsRepository: ItemsRepository = ItemsRepository.get()
-    val navigation = rememberNavigation(initialRoute = AppRoute.Tab.Items)
+    val navigation = rememberNavigation(RootTabs)
     val (router, navigationState) = navigation
     val environment = navigationState.currentScreen.environment as AppScreenEnvironment
 
@@ -43,7 +44,8 @@ fun AppScaffold() {
         bottomBar = {
             AppNavigatorBar(
                 navigationState = navigationState,
-                onTabSelected = { router.restart(it) }
+                currentIndex = navigationState.currentStackIndex,
+                onIndexSelected = router::switchStack
             )
         }
     ) { paddingValues ->

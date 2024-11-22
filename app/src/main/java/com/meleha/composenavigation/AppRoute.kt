@@ -7,6 +7,7 @@ import com.meleha.composenavigation.ui.screens.ProfileScreenProducer
 import com.meleha.composenavigation.ui.screens.SettingsScreenProducer
 import com.meleha.composenavigation.ui.screens.itemScreenProducer
 import com.meleha.navigation.Route
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.parcelize.Parcelize
 
 sealed class AppRoute(
@@ -27,4 +28,5 @@ sealed class AppRoute(
     }
 }
 
-val RootTabs = listOf(AppRoute.Tab.Items, AppRoute.Tab.Settings, AppRoute.Tab.Profile)
+val RootTabs =
+    persistentListOf(AppRoute.Tab.Items, AppRoute.Tab.Settings, AppRoute.Tab.Profile)

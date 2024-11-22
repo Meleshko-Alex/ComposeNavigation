@@ -95,6 +95,7 @@ fun PreviewAppTopBar() {
         override val isRoot: Boolean = false
         override val currentRoute: Route = AppRoute.Tab.Items
         override val currentScreen: Screen get() = ItemsScreen()
+        override val currentStackIndex: Int get() = 1
     }
 
     AppTopBar(

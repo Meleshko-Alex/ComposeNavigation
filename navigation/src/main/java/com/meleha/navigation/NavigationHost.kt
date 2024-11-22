@@ -38,7 +38,7 @@ fun NavigationHost(
         navigation.internalNavigationState.listen()
             .filterIsInstance<NavigationEvent.Removed>()
             .collect { event ->
-                saveableStateHolder.removeState(event.route)
+                event.route?.let { saveableStateHolder.removeState(it) }
             }
     }
 }

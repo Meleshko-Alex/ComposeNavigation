@@ -4,30 +4,23 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.core.os.ParcelCompat
-import com.meleha.navigation.NavigationState
 import com.meleha.navigation.Route
-import com.meleha.navigation.Router
 import com.meleha.navigation.Screen
 import com.meleha.navigation.ScreenResponseReceiver
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 
 internal class ScreenStack(
     private val routes: SnapshotStateList<RouteRecord>,
     private val screenResponseBus: ScreenResponseBus = ScreenResponseBus()
-    ) : NavigationState, Router, InternalNavigationState, Parcelable {
+) : Parcelable {
 
-    override val isRoot: Boolean get() = routes.size == 1
-    override val currentRoute: Route get() = routes.last().route
-    override val currentUuid: String get() = routes.last().uuid
-    override val currentScreen: Screen by derivedStateOf { currentRoute.screenProducer() }
-    override val screenResponseReceiver: ScreenResponseReceiver = screenResponseBus
-
-    private val eventsFlow = MutableSharedFlow<NavigationEvent>(
-        extraBufferCapacity = Int.MAX_VALUE
-    )
+    val isRoot: Boolean get() = routes.size == 1
+    val currentRoute: Route get() = routes.last().route
+    val currentUuid: String get() = routes.last().uuid
+    val currentScreen: Screen by derivedStateOf { currentRoute.screenProducer() }
+    val screenResponseReceiver: ScreenResponseReceiver = screenResponseBus
 
     constructor(parcel: Parcel) : this(
         SnapshotStateList<RouteRecord>().also { newList ->
@@ -40,30 +33,23 @@ internal class ScreenStack(
         }
     )
 
-    override fun launch(route: Route) {
+    constructor(rootRoute: Route) : this(
+        routes = mutableStateListOf(RouteRecord(rootRoute))
+    )
+
+    fun launch(route: Route) {
         screenResponseBus.cleanUp()
         routes.add(RouteRecord(route))
     }
 
-    override fun pop(response: Any?) {
-        val removedRoute = routes.removeLastOrNull()?.route
-        if (removedRoute != null) {
-            eventsFlow.tryEmit(NavigationEvent.Removed(removedRoute))
+    fun pop(response: Any?): RouteRecord? {
+        val removedRouteRecord = routes.removeLastOrNull()
+        if (removedRouteRecord != null) {
             if (response != null) {
                 screenResponseBus.send(response)
             }
         }
-    }
-
-    override fun restart(route: Route) {
-        screenResponseBus.cleanUp()
-        routes.apply {
-            routes.forEach {
-                eventsFlow.tryEmit(NavigationEvent.Removed(it.route))
-            }
-            clear()
-            add(RouteRecord(route))
-        }
+        return removedRouteRecord
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -74,6 +60,8 @@ internal class ScreenStack(
         return 0
     }
 
+    fun getAllRouteRecords(): List<RouteRecord> = routes
+
     companion object CREATOR : Parcelable.Creator<ScreenStack> {
         override fun createFromParcel(parcel: Parcel): ScreenStack {
             return ScreenStack(parcel)
@@ -82,9 +70,5 @@ internal class ScreenStack(
         override fun newArray(size: Int): Array<ScreenStack?> {
             return arrayOfNulls(size)
         }
-    }
-
-    override fun listen(): Flow<NavigationEvent> {
-        return eventsFlow
     }
 }
