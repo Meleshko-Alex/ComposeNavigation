@@ -6,6 +6,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.core.os.ParcelCompat
 import com.meleha.navigation.Route
 import com.meleha.navigation.Screen
@@ -21,6 +22,10 @@ internal class ScreenStack(
     val currentUuid: String get() = routes.last().uuid
     val currentScreen: Screen by derivedStateOf { currentRoute.screenProducer() }
     val screenResponseReceiver: ScreenResponseReceiver = screenResponseBus
+
+    constructor(routes: List<Route>) : this(
+        routes.map(::RouteRecord).toMutableStateList()
+    )
 
     constructor(parcel: Parcel) : this(
         SnapshotStateList<RouteRecord>().also { newList ->

@@ -11,6 +11,7 @@ import com.meleha.composenavigation.AppRoute
 import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.R
 import com.meleha.composenavigation.RootTabs
+import com.meleha.composenavigation.ui.AppDeepLinkHandler
 import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.navigation.NavigationHost
 import com.meleha.navigation.rememberNavigation
@@ -19,7 +20,7 @@ import com.meleha.navigation.rememberNavigation
 fun AppScaffold() {
     val context = LocalContext.current
     val itemsRepository: ItemsRepository = ItemsRepository.get()
-    val navigation = rememberNavigation(RootTabs)
+    val navigation = rememberNavigation(RootTabs, deepLinkHandler = AppDeepLinkHandler)
     val (router, navigationState) = navigation
     val environment = navigationState.currentScreen.environment as AppScreenEnvironment
 
