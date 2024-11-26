@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.meleha.composenavigation.AppRoute
 import com.meleha.composenavigation.R
 import com.meleha.composenavigation.ui.AppScreenEnvironment
-import com.meleha.composenavigation.ui.screens.ItemsScreen
+import com.meleha.composenavigation.ui.screens.items.ItemsScreen
 import com.meleha.navigation.NavigationState
 import com.meleha.navigation.Route
 import com.meleha.navigation.Screen

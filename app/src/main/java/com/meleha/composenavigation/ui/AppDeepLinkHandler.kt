@@ -2,7 +2,7 @@ package com.meleha.composenavigation.ui
 
 import android.net.Uri
 import com.meleha.composenavigation.AppRoute
-import com.meleha.composenavigation.ui.screens.ItemScreenArgs
+import com.meleha.composenavigation.ui.screens.item.ItemScreenArgs
 import com.meleha.navigation.links.DeepLinkHandler
 import com.meleha.navigation.links.MultiStackState
 

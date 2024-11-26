@@ -1,11 +1,11 @@
 package com.meleha.composenavigation
 
 import com.meleha.composenavigation.ui.AppScreen
-import com.meleha.composenavigation.ui.screens.ItemScreenArgs
-import com.meleha.composenavigation.ui.screens.ItemsScreenProducer
+import com.meleha.composenavigation.ui.screens.item.ItemScreenArgs
+import com.meleha.composenavigation.ui.screens.items.ItemsScreenProducer
 import com.meleha.composenavigation.ui.screens.ProfileScreenProducer
 import com.meleha.composenavigation.ui.screens.SettingsScreenProducer
-import com.meleha.composenavigation.ui.screens.itemScreenProducer
+import com.meleha.composenavigation.ui.screens.item.itemScreenProducer
 import com.meleha.navigation.Route
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.parcelize.Parcelize

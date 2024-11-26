@@ -1,4 +1,4 @@
-package com.meleha.composenavigation.ui.screens
+package com.meleha.composenavigation.ui.screens.item
 
 import android.os.Parcelable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.R
 import com.meleha.composenavigation.ui.AppScreen
@@ -58,14 +59,10 @@ class ItemScreen(
 
     @Composable
     override fun Content() {
-        val itemsRepository = ItemsRepository.get()
+        val viewModel = viewModel { ItemViewModel(args) }
         val router = LocalRouter.current
         ItemContent(
-            initialValue = if (args is ItemScreenArgs.Edit) {
-                remember { itemsRepository.getItems().value[args.index] }
-            } else {
-                ""
-            },
+            initialValue = remember { viewModel.getInitialValue() },
             isAddMode = args is ItemScreenArgs.Add
         ) { newValue ->
             router.pop(ItemScreenResponse(args, newValue))

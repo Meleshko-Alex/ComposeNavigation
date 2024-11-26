@@ -1,4 +1,4 @@
-package com.meleha.composenavigation.ui.screens
+package com.meleha.composenavigation.ui.screens.items
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +20,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.meleha.composenavigation.AppRoute
-import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.R
 import com.meleha.composenavigation.ui.AppScreen
 import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.composenavigation.ui.FloatingAction
+import com.meleha.composenavigation.ui.screens.item.ItemScreenArgs
 import com.meleha.navigation.LocalRouter
 import com.meleha.navigation.ResponseListener
 import com.meleha.navigation.Router
@@ -49,18 +50,12 @@ class ItemsScreen : AppScreen {
     @Composable
     override fun Content() {
         router = LocalRouter.current
-        val itemsRepository = ItemsRepository.get()
-        val items by itemsRepository.getItems().collectAsStateWithLifecycle()
+        val viewModel = viewModel<ItemsViewModel>()
+        val items by viewModel.itemsFlow.collectAsStateWithLifecycle()
         val isEmpty by remember {
             derivedStateOf { items.isEmpty() }
         }
-        ResponseListener<ItemScreenResponse> { response ->
-            if (response.args is ItemScreenArgs.Edit) {
-                itemsRepository.updateItem(response.args.index, response.newValue)
-            } else {
-                itemsRepository.addItem(response.newValue)
-            }
-        }
+        ResponseListener(viewModel::processResponse)
         ItemsContent(
             isItemEmpty = isEmpty,
             items = { items },
