@@ -3,10 +3,15 @@ package com.meleha.composenavigation.ui.screens.item
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.meleha.composenavigation.ItemsRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
-class ItemViewModel(
-    private val args: ItemScreenArgs,
-    private val repository: ItemsRepository = ItemsRepository.get(),
+@HiltViewModel(assistedFactory = ItemViewModel.Factory::class)
+class ItemViewModel @AssistedInject constructor(
+    @Assisted private val args: ItemScreenArgs,
+    private val repository: ItemsRepository,
 ) : ViewModel() {
 
     init {
@@ -23,5 +28,10 @@ class ItemViewModel(
     override fun onCleared() {
         super.onCleared()
         Log.i("AAA", "ItemViewModel-${hashCode()} destroyed")
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(args: ItemScreenArgs): ItemViewModel
     }
 }

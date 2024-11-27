@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.R
+import com.meleha.composenavigation.di.injectViewModel
 import com.meleha.composenavigation.ui.AppScreen
 import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.navigation.LocalRouter
@@ -59,7 +60,9 @@ class ItemScreen(
 
     @Composable
     override fun Content() {
-        val viewModel = viewModel { ItemViewModel(args) }
+        val viewModel = injectViewModel<ItemViewModel, ItemViewModel.Factory> { factory ->
+            factory.create(args)
+        }
         val router = LocalRouter.current
         ItemContent(
             initialValue = remember { viewModel.getInitialValue() },
@@ -68,7 +71,6 @@ class ItemScreen(
             router.pop(ItemScreenResponse(args, newValue))
         }
     }
-
 }
 
 @Composable

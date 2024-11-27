@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import com.meleha.composenavigation.ItemsRepository
 import com.meleha.composenavigation.ui.screens.item.ItemScreenArgs
 import com.meleha.composenavigation.ui.screens.item.ItemScreenResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ItemsViewModel(
-    private val repository: ItemsRepository = ItemsRepository.get()
+@HiltViewModel
+class ItemsViewModel @Inject constructor(
+    private val repository: ItemsRepository,
 ) : ViewModel() {
 
     val itemsFlow = repository.getItems()

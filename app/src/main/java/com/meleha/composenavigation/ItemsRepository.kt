@@ -3,6 +3,8 @@ package com.meleha.composenavigation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
+import javax.inject.Singleton
 
 interface ItemsRepository {
 
@@ -10,13 +12,10 @@ interface ItemsRepository {
     fun addItem(item: String)
     fun updateItem(index: Int, newValue: String)
     fun clear()
-
-    companion object {
-        fun get(): ItemsRepository = ItemsRepositoryImpl
-    }
 }
 
-object ItemsRepositoryImpl : ItemsRepository {
+@Singleton
+class ItemsRepositoryImpl @Inject constructor(): ItemsRepository {
 
     private val items = MutableStateFlow(generateFakeItems())
 

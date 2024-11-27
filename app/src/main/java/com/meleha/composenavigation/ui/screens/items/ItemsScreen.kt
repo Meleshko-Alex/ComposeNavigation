@@ -23,10 +23,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.meleha.composenavigation.AppRoute
 import com.meleha.composenavigation.R
+import com.meleha.composenavigation.di.injectViewModel
 import com.meleha.composenavigation.ui.AppScreen
 import com.meleha.composenavigation.ui.AppScreenEnvironment
 import com.meleha.composenavigation.ui.FloatingAction
 import com.meleha.composenavigation.ui.screens.item.ItemScreenArgs
+import com.meleha.composenavigation.ui.screens.item.ItemViewModel
 import com.meleha.navigation.LocalRouter
 import com.meleha.navigation.ResponseListener
 import com.meleha.navigation.Router
@@ -50,7 +52,7 @@ class ItemsScreen : AppScreen {
     @Composable
     override fun Content() {
         router = LocalRouter.current
-        val viewModel = viewModel<ItemsViewModel>()
+        val viewModel = injectViewModel<ItemsViewModel>()
         val items by viewModel.itemsFlow.collectAsStateWithLifecycle()
         val isEmpty by remember {
             derivedStateOf { items.isEmpty() }
